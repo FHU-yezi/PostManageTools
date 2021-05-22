@@ -1,9 +1,14 @@
 import sqlite3
 
-def InitDatabase(filename: str="data.db"):
+
+def ConnectDatabase(filename: str="data.db"):
     db = sqlite3.connect(filename)
+    return db
+
+
+def InitTable(db: object, table_name: str="data"):
     cursor = db.cursor()
-    cursor.execute("""CREATE TABLE data
+    sql_text = "CREATE TABLE " + table_name + """
         (sorted_id INT    KEY    NOT NULL,
         pid              TEXT    NOT NULL,
         pslug            TEXT    NOT NULL,
@@ -23,13 +28,23 @@ def InitDatabase(filename: str="data.db"):
         user_badge       TEXT,
         topic_name       TEXT,
         tid              INT,
-        tslug            TEXT)""")
+        tslug            TEXT)"""
+    cursor.execute(sql_text)
     db.commit()
-    return db
 
-def ConnectDatabase(filename: str="data.db"):
-    db = sqlite3.connect(filename)
-    return db
+
+def EmptyTable(db: object, table_name: str):
+    sql_text = "DELETE FROM " + table_name
+    cursor = db.cursor()
+    cursor.execute(sql)
+    db.commit()
+
+
+def DeleteTable(db: object, table_name: str):
+    sql_text = "DROP TABLE " + table_name
+    cursor = db.cursor()
+    cursor.execute(sql_text)
+    db.commit()
 
 
 def AddDataList(db: object, data_list: list):
@@ -58,10 +73,4 @@ def AddDataList(db: object, data_list: list):
         sql_text = "".join(sql_text_list)
 
         cursor.execute(sql_text)
-    db.commit()
-
-def EmptyDatabase(db: object):
-    sql = "DELETE FROM data"
-    cursor = db.cursor()
-    cursor.execute(sql)
     db.commit()
