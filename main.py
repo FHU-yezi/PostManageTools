@@ -4,6 +4,8 @@ import settings
 import welcome
 import config
 
+st.set_page_config(page_title="简书小岛管理平台", layout="wide")
+
 SubPageList = ["欢迎", "仪表盘", "帖子管理", "用户管理", "舆情监测", "设置"]
 
 st.title("简书小岛管理平台")
