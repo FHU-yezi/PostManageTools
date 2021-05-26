@@ -1,0 +1,3 @@
+DEBUG_MODE = False
+
+ISLAND_URL = None
