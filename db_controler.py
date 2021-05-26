@@ -47,15 +47,18 @@ def DeleteTable(db: object, table_name: str):
     db.commit()
 
 
-def AddDataList(db: object, data_list: list):
+def AddDataList(db: object, table_name: str, data_list: list):
     for item in data_list:
         item["content"] = item["content"].replace("\n", "")
-        item["content"] = item["content"].replace("\"", "'")
+        item["content"] = item["content"].replace("'", "\"")
+        # item["content"] = item["content"].replace("“", "'")
+        # item["content"] = item["content"].replace("”", "'")
+        item["pictures"] = ",".join(item["pictures"])
         cursor = db.cursor()
         columns_list = ["sorted_id", "pid", "pslug", "title", "content", "likes_count", "comments_count", 
                         "is_topped", "is_new", "is_hot", "is_most_valuable", "create_time", "pictures", 
                         "nickname", "uid", "uslug", "user_badge", "topic_name", "tid", "tslug"]
-        sql_text = "INSERT INTO data ("
+        sql_text = "INSERT INTO "+ table_name + " ("
         for column in columns_list:
             try:
                 sql_text += column + ","
@@ -65,12 +68,11 @@ def AddDataList(db: object, data_list: list):
         sql_text += ") VALUES ("
         for column in columns_list:
             try:
-                sql_text += "\"" + str(item[column]) + "\","
+                sql_text += "\'" + str(item[column]) + "\',"
             except KeyError:
-                sql_text += "\"" + "\","
+                sql_text += "\'" + "\',"
         sql_text_list = list(sql_text)
         sql_text_list[-1] = ")"
         sql_text = "".join(sql_text_list)
-
         cursor.execute(sql_text)
     db.commit()
