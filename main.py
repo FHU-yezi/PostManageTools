@@ -3,6 +3,7 @@ import streamlit as st
 import settings
 import welcome
 import config
+import post_manage
 
 st.set_page_config(page_title="简书小岛管理平台", layout="wide")
 
@@ -17,7 +18,7 @@ if active_page == "欢迎":
 elif active_page =="仪表盘":
     pass
 elif active_page =="帖子管理":
-    pass
+    post_manage.main()
 elif active_page =="用户管理":
     pass
 elif active_page =="舆情监测":
