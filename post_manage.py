@@ -1,4 +1,5 @@
 import datetime
+import os
 import time
 from random import randint, random
 
@@ -12,7 +13,10 @@ from db_controler import *
 
 def InitDB():
     db = ConnectDatabase("data.db")
-    InitTable(db, "all_post_data")
+    try:
+        InitTable(db, "all_post_data")
+    except sqlite3.OperationalError:  # 表已存在
+        pass
     return db
 
 @st.cache()
@@ -22,7 +26,6 @@ def GetNextSortedID(data):
 def comapre_time(source_time, time_limit):
     source_timestamp = time.mktime(source_time)
     source_date = datetime.date.fromtimestamp(source_timestamp)
-    limit_timestamp = None
     return source_date < time_limit
 
 
@@ -50,15 +53,13 @@ def GetData(island_url, db, table_name, time_limit):
 
 def main():
     if config.ISLAND_URL == None:
+        st.error("未设置小岛链接")
         return
-    try:
-        db = InitDB()
-    except Exception:
-        pass
+    db = InitDB()
+    
     
     st.header("敏感词检测")
     limit_time = st.date_input("时间限制", help="只会对时间在此之后的帖子进行敏感词检测")
-    st.write(type(limit_time))
     
 
     if db.total_changes == 0:
