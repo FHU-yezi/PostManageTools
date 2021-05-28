@@ -6,7 +6,7 @@ def main():
     island_url = st.text_input("小岛链接")
 
     if "/g/" in island_url:
-        st.success("小岛链接有效")
+        st.success("小岛链接已保存")
         config.ISLAND_URL = island_url
     elif island_url == "":
         pass

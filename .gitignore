@@ -1,4 +1,4 @@
-*.ipynbb
+*.ipynb
 *.db
 *.log
 __pycache__/
