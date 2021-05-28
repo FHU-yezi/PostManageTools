@@ -1,3 +1,4 @@
+import datetime
 import time
 from random import randint, random
 
@@ -18,8 +19,14 @@ def InitDB():
 def GetNextSortedID(data):
     return data[-1]["sorted_id"]
 
+def comapre_time(source_time, time_limit):
+    source_timestamp = time.mktime(source_time)
+    source_date = datetime.date.fromtimestamp(source_timestamp)
+    limit_timestamp = None
+    return source_date < time_limit
 
-def GetData(island_url, db, table_name, day_limit):
+
+def GetData(island_url, db, table_name, time_limit):
     stop_flag = False
     data_list = jrt.GetIslandPostList(island_url, count=10)  # 首次爬取
     next_sorted_id = GetNextSortedID(data_list)
@@ -29,7 +36,7 @@ def GetData(island_url, db, table_name, day_limit):
         time.sleep(random())
         new_data_list = []
         for item in data_list:
-            if item["create_time"].tm_mday > day_limit:
+            if comapre_time(item["create_time"], time_limit):
                 new_data_list.append(item)
             else:
                 stop_flag += 1  # 帖子不一定按照时间排序，有新评论会导致排序不同
@@ -48,10 +55,15 @@ def main():
         db = InitDB()
     except Exception:
         pass
+    
+    st.header("敏感词检测")
+    limit_time = st.date_input("时间限制", help="只会对时间在此之后的帖子进行敏感词检测")
+    st.write(type(limit_time))
+    
 
     if db.total_changes == 0:
         flag = st.warning("正在获取数据，请稍后......")
-        GetData(config.ISLAND_URL, db, "all_post_data", 26)
+        GetData(config.ISLAND_URL, db, "all_post_data", limit_time)
         flag = st.success("获取数据成功！")
     
     cursor = db.execute("SELECT * FROM all_post_data")
