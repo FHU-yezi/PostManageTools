@@ -33,6 +33,33 @@ def InitAllDataTable(db: object, table_name: str="data"):
     db.commit()
 
 
+def InitBanedDataTable(db: object, table_name: str="data"):
+    cursor = db.cursor()
+    sql_text = "CREATE TABLE " + table_name + """
+        (sorted_id INT    KEY    NOT NULL,
+        pid              TEXT    NOT NULL,
+        pslug            TEXT    NOT NULL,
+        ban_words        TEXT,
+        title            TEXT,
+        content          TEXT    NOT NULL,
+        likes_count      INT     NOT NULL,
+        comments_count   TEXT    NOT NULL,
+        is_topped        BOOL    NOT NULL,
+        is_new           BOOL    NOT NULL,
+        is_hot           BOOL    NOT NULL,
+        is_most_valuable BOOL    NOT NULL,
+        create_time      INT     NOT NULL,
+        pictures         TEXT,
+        nickname         TEXT    NOT NULL,
+        uid              INT     NOT NULL,
+        uslug            TEXT    NOT NULL,
+        user_badge       TEXT,
+        topic_name       TEXT,
+        tid              INT,
+        tslug            TEXT)"""
+    cursor.execute(sql_text)
+    db.commit()
+
 def EmptyTable(db: object, table_name: str):
     sql_text = "DELETE FROM " + table_name
     cursor = db.cursor()

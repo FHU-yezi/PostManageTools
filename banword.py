@@ -1,4 +1,4 @@
-banword_list = [
+banwords_list = [
     "微信",
     "公众号",
     "公主号",
