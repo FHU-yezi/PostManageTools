@@ -23,6 +23,7 @@ def InitDB():
 def GetNextSortedID(data):
     return data[-1]["sorted_id"]
 
+@st.cache()
 def comapre_time(source_time, time_limit):
     source_timestamp = time.mktime(source_time)
     source_date = datetime.date.fromtimestamp(source_timestamp)
@@ -30,17 +31,18 @@ def comapre_time(source_time, time_limit):
 
 
 def GetData(island_url, db, table_name, time_limit):
-    stop_flag = False
+    stop_flag = 0
     data_list = jrt.GetIslandPostList(island_url, count=10)  # 首次爬取
     next_sorted_id = GetNextSortedID(data_list)
     AddDataList(db, table_name, data_list)
-    for _ in range(10000):
+    while True:
         data_list = jrt.GetIslandPostList(island_url, start_id=next_sorted_id, count=randint(100, 300))
         time.sleep(random())
         new_data_list = []
         for item in data_list:
             if comapre_time(item["create_time"], time_limit):
                 new_data_list.append(item)
+                stop_flag = 0
             else:
                 stop_flag += 1  # 帖子不一定按照时间排序，有新评论会导致排序不同
         if data_list != []:
