@@ -14,7 +14,7 @@ from db_controler import *
 def InitDB():
     db = ConnectDatabase("data.db")
     try:
-        InitTable(db, "all_post_data")
+        InitAllDataTable(db, "all_post_data")
     except sqlite3.OperationalError:  # 表已存在
         pass
     return db
@@ -69,10 +69,4 @@ def main():
         GetData(config.ISLAND_URL, db, "all_post_data", limit_time)
         flag = st.success("获取数据成功！")
     
-    cursor = db.execute("SELECT * FROM all_post_data")
-    data = cursor.fetchall()
-    for item in data:
-        content = item[4]
-        for word in banword_list:
-            if word in content:
-                st.write("触发敏感词！" + word + "在内容" + content)
+    data = db.execute("SELECT * FROM all_post_data").fetchall()

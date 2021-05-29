@@ -6,7 +6,7 @@ def ConnectDatabase(filename: str="data.db"):
     return db
 
 
-def InitTable(db: object, table_name: str="data"):
+def InitAllDataTable(db: object, table_name: str="data"):
     cursor = db.cursor()
     sql_text = "CREATE TABLE " + table_name + """
         (sorted_id INT    KEY    NOT NULL,
@@ -51,28 +51,16 @@ def AddDataList(db: object, table_name: str, data_list: list):
     for item in data_list:
         item["content"] = item["content"].replace("\n", "")
         item["content"] = item["content"].replace("'", "\"")
-        # item["content"] = item["content"].replace("“", "'")
-        # item["content"] = item["content"].replace("”", "'")
         item["pictures"] = ",".join(item["pictures"])
-        cursor = db.cursor()
-        columns_list = ["sorted_id", "pid", "pslug", "title", "content", "likes_count", "comments_count", 
-                        "is_topped", "is_new", "is_hot", "is_most_valuable", "create_time", "pictures", 
-                        "nickname", "uid", "uslug", "user_badge", "topic_name", "tid", "tslug"]
-        sql_text = "INSERT INTO "+ table_name + " ("
-        for column in columns_list:
-            try:
-                sql_text += column + ","
-            except KeyError:
-                pass
-        sql_text = sql_text.replace("tslug,", "tslug")
-        sql_text += ") VALUES ("
-        for column in columns_list:
-            try:
-                sql_text += "\'" + str(item[column]) + "\',"
-            except KeyError:
-                sql_text += "\'" + "\',"
-        sql_text_list = list(sql_text)
-        sql_text_list[-1] = ")"
-        sql_text = "".join(sql_text_list)
-        cursor.execute(sql_text)
+        
+        keys_text = ""
+        values_text = ""
+        for key, value in item.items():
+            keys_text += key + ","
+            values_text += "\'" + str(value) + "\',"
+        keys_text = keys_text.strip(",")
+        values_text = values_text.strip(",")
+        sql_text = "INSERT INTO " + table_name + " (" + keys_text \
+                    + ") VALUES (" + values_text + ")"
+        db.execute(sql_text)
     db.commit()
